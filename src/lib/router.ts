@@ -41,7 +41,6 @@ type Caller<T> = (req: ChatRequest, key: string, model: string, baseUrl: string)
 const callers: Record<ProviderName, Caller<AdapterResult>> = {
   aibox: (req, key, model, baseUrl) => callOpenAICompatible(req, key, model, baseUrl),
   claude: (req, key, model, baseUrl) => callOpenAICompatible(req, key, model, baseUrl),
-  kimi: (req, key, model, baseUrl) => callOpenAICompatible(req, key, model, baseUrl),
 };
 
 interface StreamStart {
@@ -58,8 +57,6 @@ const streamCallers: Record<ProviderName, Caller<StreamStart>> = {
   aibox: (req, key, model, baseUrl) =>
     startStream(streamOpenAICompatible(req, key, model, baseUrl)),
   claude: (req, key, model, baseUrl) =>
-    startStream(streamOpenAICompatible(req, key, model, baseUrl)),
-  kimi: (req, key, model, baseUrl) =>
     startStream(streamOpenAICompatible(req, key, model, baseUrl)),
 };
 

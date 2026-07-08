@@ -12,7 +12,7 @@ function resolveGatewayApiKey(): string {
   return generated;
 }
 
-export type ProviderName = "aibox" | "claude" | "kimi";
+export type ProviderName = "aibox" | "claude";
 
 const defaults = {
   model: "deepseek-v4-pro",
@@ -26,12 +26,6 @@ const claudeDefaults = {
   contextWindow: 200_000,
 };
 
-const kimiDefaults = {
-  model: "kimi-k2.5",
-  baseUrl: "",
-  contextWindow: 128_000,
-};
-
 const globalForModels = globalThis as unknown as {
   __aiGatewayModelMap?: Record<string, ProviderName>;
 };
@@ -40,14 +34,13 @@ export const modelMap: Record<string, ProviderName> =
   globalForModels.__aiGatewayModelMap || (globalForModels.__aiGatewayModelMap = {
     "deepseek-v4-pro": "aibox",
     "claude-opus-4-7": "claude",
-    "kimi-k2.5": "kimi",
     "gemini-2.5-flash": "claude",
   });
 
 export const config = {
   gatewayApiKey: resolveGatewayApiKey(),
   displayModelName: process.env.DISPLAY_MODEL || "deepseek-v4-pro",
-  providerOrder: (process.env.PROVIDER_ORDER || "aibox,claude,kimi").split(",") as ProviderName[],
+  providerOrder: (process.env.PROVIDER_ORDER || "aibox,claude").split(",") as ProviderName[],
   providers: {
     aibox: {
       keys: splitKeys(process.env.AIBOX_KEYS),
@@ -60,12 +53,6 @@ export const config = {
       model: process.env.CLAUDE_MODEL || claudeDefaults.model,
       baseUrl: process.env.CLAUDE_BASE_URL || claudeDefaults.baseUrl,
       contextWindow: Number(process.env.CLAUDE_CONTEXT_WINDOW) || claudeDefaults.contextWindow,
-    },
-    kimi: {
-      keys: splitKeys(process.env.KIMI_KEYS),
-      model: process.env.KIMI_MODEL || kimiDefaults.model,
-      baseUrl: process.env.KIMI_BASE_URL || process.env.CLAUDE_BASE_URL || claudeDefaults.baseUrl,
-      contextWindow: Number(process.env.KIMI_CONTEXT_WINDOW) || kimiDefaults.contextWindow,
     },
   },
 };

@@ -13,8 +13,7 @@ const GOOD_MODELS = new Set([
   "gpt-5.5-mini",
   "gpt-5.5-nano",
   "smart-chat",
-  "kimi-k2.5",
-  "kimi-k2.7-code",
+
   "x-ai/grok-4.3",
   "x-ai/grok-4.20-beta",
   "openai/gpt-5.5",
