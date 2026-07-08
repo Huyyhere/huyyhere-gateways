@@ -1,0 +1,28 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "gateway/deepseek-v4-pro",
+  "provider": {
+    "gateway": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Huyyhere",
+      "options": {
+        "apiKey": "gw-03d5159a18e253b82af5e8df7adb61a19dda0f9ce9e21faa",
+        "baseURL": "http://localhost:3000/api/v1"
+      },
+      "models": {
+        "deepseek-v4-pro": {
+          "name": "DeepSeek V4 Pro"
+        },
+        "claude-opus-4-7": {
+          "name": "Claude Opus 4.7"
+        },
+        "kimi-k2.5": {
+          "name": "Kimi K2.5"
+        },
+        "gemini-2.5-flash": {
+          "name": "Gemini 2.5 Flash"
+        }
+      }
+    }
+  }
+}
