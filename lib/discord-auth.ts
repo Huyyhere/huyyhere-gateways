@@ -28,10 +28,10 @@ export function isOwnerId(discordId: string): boolean {
   return discordId === OWNER_DISCORD_ID;
 }
 
-export function buildAuthorizeUrl(state: string, redirectUri?: string): string {
+export function buildAuthorizeUrl(state: string): string {
   const params = new URLSearchParams({
     client_id: CLIENT_ID!,
-    redirect_uri: redirectUri || REDIRECT_URI!,
+    redirect_uri: REDIRECT_URI!,
     response_type: "code",
     scope: "identify email",
     state,
@@ -43,7 +43,7 @@ export function generateState(): string {
   return crypto.randomBytes(24).toString("hex");
 }
 
-export async function exchangeCodeForUser(code: string, redirectUri?: string): Promise<{ id: string; username: string; email: string | null }> {
+export async function exchangeCodeForUser(code: string): Promise<{ id: string; username: string; email: string | null }> {
   const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -52,7 +52,7 @@ export async function exchangeCodeForUser(code: string, redirectUri?: string): P
       client_secret: CLIENT_SECRET!,
       grant_type: "authorization_code",
       code,
-      redirect_uri: redirectUri || REDIRECT_URI!,
+      redirect_uri: REDIRECT_URI!,
     }),
   });
   if (!tokenRes.ok) throw new Error(`discord token exchange failed: ${tokenRes.status}`);

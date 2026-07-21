@@ -1,12 +1,6 @@
 import { NextResponse } from "next/server";
-import { buildModelRoutes } from "@/lib/provider";
+import { MODEL_LIST } from "@/lib/models";
 
 export async function GET() {
-  const routes = buildModelRoutes();
-  const data = Object.keys(routes).map((id) => ({
-    id,
-    object: "model" as const,
-    created: 1700000000,
-  }));
-  return NextResponse.json({ object: "list", data });
+  return NextResponse.json({ object: "list", data: MODEL_LIST });
 }

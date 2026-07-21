@@ -98,7 +98,7 @@ async function main() {
   console.log("=== 1. Test THẲNG từng provider (bỏ qua gateway) ===\n");
 
   const blackcatKeys = keyPool("BLACKCAT");
-  if (blackcatKeys[0]) await testDirect("BlackCat", env.BLACKCAT_BASE_URL, blackcatKeys[0], "mimo-code-free");
+  if (blackcatKeys[0]) await testDirect("BlackCat", env.BLACKCAT_BASE_URL, blackcatKeys[0], env.BLACKCAT_MODEL);
 
   const zlkKeys = keyPool("ZLKPRO");
   if (zlkKeys[0]) {
@@ -114,8 +114,8 @@ async function main() {
 
   const venusesKeys = keyPool("VENESES");
   if (venusesKeys[0]) {
-    await testDirect("Venuses", env.VENESES_BASE_URL, venusesKeys[0], "glm-5.2");
-    await testDirect("Venuses", env.VENESES_BASE_URL, venusesKeys[0], "grok-4.5");
+    await testDirect("Venuses", env.VENESES_BASE_URL, venusesKeys[0], env.VENESES_MODEL_GLM_5_2);
+    await testDirect("Venuses", env.VENESES_BASE_URL, venusesKeys[0], env.VENESES_MODEL_GROK_4_5);
   }
 
   const zaiKeys = keyPool("ZAI");

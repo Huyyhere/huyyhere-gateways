@@ -12,6 +12,7 @@ import {
 } from "@/lib/token-optimizer";
 import { getTool, toFunctionSchema } from "@/lib/tools/registry";
 import "@/lib/tools/builtins";
+import { FALLBACK_ORDER, MODEL_CAPABILITIES } from "@/lib/models";
 import { buildModelRoutes, callUpstream, type ModelRoute } from "@/lib/provider";
 import { log } from "@/lib/logger";
 import { responseCache, buildCacheKey } from "@/lib/cache";
@@ -26,7 +27,6 @@ import { startRateLimiterCleanup } from "@/lib/rate-limiter";
 startRateLimiterCleanup();
 
 const modelRoutes = buildModelRoutes();
-const FALLBACK_ORDER = Object.keys(modelRoutes);
 
 async function processToolCalls(
   route: ModelRoute,
@@ -296,6 +296,7 @@ export async function POST(req: NextRequest) {
     }
 
     const currentModel = isAuto ? "auto" : modelId;
+    const caps = MODEL_CAPABILITIES[currentModel];
 
     if (isAuto) {
       if (isStreaming) {
@@ -321,8 +322,8 @@ export async function POST(req: NextRequest) {
 
       const usage = data.usage as Record<string, number> | undefined;
       const outputTokens = usage?.completion_tokens || estimateTokens(JSON.stringify(data));
-    const pricing = { input: 1, output: 4 };
-    const cost = estimateCost(afterTokens, outputTokens, pricing);
+      const pricing = MODEL_CAPABILITIES[modelUsed] || { inputPrice: 1, outputPrice: 4 };
+      const cost = estimateCost(afterTokens, outputTokens, pricing);
 
       log({
         timestamp: new Date().toISOString(), requestId, model: modelUsed,
@@ -412,7 +413,7 @@ export async function POST(req: NextRequest) {
 
     const usage = data.usage as Record<string, number> | undefined;
     const outputTokens = usage?.completion_tokens || estimateTokens(JSON.stringify(data));
-    const pricing = { input: 1, output: 4 };
+    const pricing = caps || { inputPrice: 1, outputPrice: 4 };
     const cost = estimateCost(afterTokens, outputTokens, pricing);
 
     log({

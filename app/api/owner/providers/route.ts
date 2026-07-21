@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { verifyOwnerAuth, secureHeaders } from "@/lib/owner-security";
 import { buildModelRoutes } from "@/lib/provider";
-import { getKeyPool } from "@/lib/models";
+import { getKeyPool, MODEL_IDS, MODEL_CAPABILITIES } from "@/lib/models";
 
 interface ProviderInfo {
   name: string;

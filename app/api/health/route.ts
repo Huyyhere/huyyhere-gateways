@@ -1,15 +1,14 @@
 import { NextResponse } from "next/server";
 import { listTools } from "@/lib/tools/registry";
 import "@/lib/tools/builtins";
-import { buildModelRoutes } from "@/lib/provider";
+import { MODEL_IDS } from "@/lib/models";
 
 export async function GET() {
   const tools = listTools();
-  const routes = buildModelRoutes();
   return NextResponse.json({
     status: "ok",
     version: "0.1.8",
-    models: Object.keys(routes).length,
+    models: MODEL_IDS.length,
     tools: tools.length,
   });
 }

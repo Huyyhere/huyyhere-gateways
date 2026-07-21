@@ -9,11 +9,11 @@ import {
   hasImageContent,
   type MessageContent,
 } from "@/lib/token-optimizer";
+import { FALLBACK_ORDER } from "@/lib/models";
 import { buildModelRoutes, callUpstream, type ModelRoute } from "@/lib/provider";
 import { log } from "@/lib/logger";
 
 const modelRoutes = buildModelRoutes();
-const FALLBACK_ORDER = Object.keys(modelRoutes);
 
 interface ResponsesRequest {
   model: string;

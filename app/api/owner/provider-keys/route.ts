@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
   const keys = await listProviderKeys();
   const providers = Object.entries(PROVIDER_REGISTRY).map(([name, cfg]) => ({
     name,
+    freeModels: cfg.freeModels,
     signup: cfg.signup,
     noKey: !!cfg.noKey,
     wired: !!cfg.envPrefix,

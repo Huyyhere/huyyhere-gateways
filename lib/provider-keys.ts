@@ -10,7 +10,6 @@ export interface ProviderKey {
   addedAt: string;
   lastTestedAt?: string;
   lastTestMsg?: string;
-  enabledModels?: string[]; // models selected by owner for this provider
 }
 
 const store = new Map<string, ProviderKey>(); // id -> record
@@ -36,7 +35,6 @@ export async function ensureLoaded() {
         addedAt: doc.addedAt,
         lastTestedAt: doc.lastTestedAt,
         lastTestMsg: doc.lastTestMsg,
-        enabledModels: doc.enabledModels || [],
       });
     }
   } catch {}
@@ -207,32 +205,4 @@ export function getStats(): Record<string, { total: number; active: number; erro
     stats[k.provider][k.status]++;
   }
   return stats;
-}
-
-export async function toggleModel(provider: string, modelId: string, enabled: boolean): Promise<boolean> {
-  await ensureLoaded();
-  // Find any active key for this provider and toggle model
-  for (const k of store.values()) {
-    if (k.provider === provider && k.status !== "error") {
-      if (!k.enabledModels) k.enabledModels = [];
-      if (enabled) {
-        if (!k.enabledModels.includes(modelId)) k.enabledModels.push(modelId);
-      } else {
-        k.enabledModels = k.enabledModels.filter((m) => m !== modelId);
-      }
-      await saveKey(k);
-      return true;
-    }
-  }
-  return false;
-}
-
-export function getEnabledModels(): Record<string, string[]> {
-  const result: Record<string, string[]> = {};
-  for (const k of store.values()) {
-    if (k.status !== "error" && k.enabledModels && k.enabledModels.length > 0) {
-      result[k.provider] = k.enabledModels;
-    }
-  }
-  return result;
 }
