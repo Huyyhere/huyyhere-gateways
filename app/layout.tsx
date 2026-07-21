@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "HuyyHere Gateway",
-  description: "One endpoint. 9 free AI models. OpenAI & Anthropic compatible.",
+  title: "HuyyHere Gateway — Đã đóng cửa",
+  description: "Dịch vụ đã ngừng hoạt động.",
   icons: { icon: "/favicon.ico" },
-  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
