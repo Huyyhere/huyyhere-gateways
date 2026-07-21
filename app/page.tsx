@@ -149,7 +149,6 @@ export default function Home() {
         <div className="nav-links">
           <a href="#endpoints">API</a>
           <a href="#docs">Docs</a>
-          <a className="btn-sm" href="/dashboard">Dashboard</a>
         </div>
       </nav>
 
@@ -164,11 +163,10 @@ export default function Home() {
             Provider down? Key expired? Rate limited? Your code never knows.
           </p>
           <div className="cta-row">
-            <a className="btn-primary" href="/dashboard">
+            <a className="btn-primary" href="#docs">
               Get started
               <span style={{ fontSize: "1.1em" }}>→</span>
             </a>
-            <a className="btn-secondary" href="#docs">View docs</a>
           </div>
         </div>
         <div className="arch-diagram">
