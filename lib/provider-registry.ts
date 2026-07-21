@@ -116,14 +116,5 @@ export const PROVIDER_REGISTRY: Record<string, ProviderConfig> = {
     signup: "https://cohere.com",
     envPrefix: "COHERE",
   },
-  Pollinations: {
-    // text.pollinations.ai's old no-key endpoint has been superseded by
-    // gen.pollinations.ai, which is OpenAI-shaped but now requires a key.
-    url: "https://gen.pollinations.ai/v1/chat/completions",
-    testModel: "openai",
-    freeModels: ["openai", "openai-fast"],
-    signup: "https://enter.pollinations.ai",
-    envPrefix: "POLLINATIONS",
-  },
 };
 

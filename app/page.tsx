@@ -31,48 +31,107 @@ interface Metrics {
 function Bar({ data }: { data: number[] }) {
   const max = Math.max(...data, 1);
   return (
-    <div style={{ display: "flex", alignItems: "flex-end", gap: 2, height: 50 }}>
+    <div style={{ display: "flex", alignItems: "flex-end", gap: 3, height: 60 }}>
       {data.map((v, i) => (
-        <div key={i} style={{ flex: 1, height: `${(v / max) * 100}%`, background: "var(--teal)", borderRadius: 2, minHeight: v > 0 ? 2 : 0, transition: "height 0.3s" }} title={`${v}`} />
+        <div
+          key={i}
+          style={{
+            flex: 1,
+            height: `${(v / max) * 100}%`,
+            background: "linear-gradient(to top, var(--accent), var(--cyan))",
+            borderRadius: 3,
+            minHeight: v > 0 ? 3 : 0,
+            transition: "height 0.3s ease",
+            opacity: v > 0 ? 1 : 0.2,
+          }}
+          title={`${v} requests`}
+        />
       ))}
     </div>
   );
 }
 
-// The signature element: a patch-bay diagram. Several provider jacks route
-// through the gateway trunk to a single output — this literally is what the
-// gateway does, not a decorative flourish.
-function PatchBay() {
-  const sources = [
-    { y: 26, label: "ZLKPro" },
-    { y: 76, label: "Z.AI" },
-    { y: 126, label: "Mistral" },
-    { y: 176, label: "ElectronHub" },
-    { y: 226, label: "+ 10 khác" },
+function ArchDiagram() {
+  const providers = [
+    { y: 20, label: "Provider 1" },
+    { y: 60, label: "Provider 2" },
+    { y: 100, label: "Provider 3" },
+    { y: 140, label: "Provider 4" },
+    { y: 180, label: "+10 more" },
   ];
-  const gwX = 200, gwY = 126;
+  const gwX = 240, gwY = 100;
 
   return (
-    <svg className="patchbay" viewBox="0 0 400 252" xmlns="http://www.w3.org/2000/svg">
-      {sources.map((s, i) => (
+    <svg viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "auto" }}>
+      <defs>
+        <linearGradient id="gwGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#3b82f6" />
+          <stop offset="100%" stopColor="#06b6d4" />
+        </linearGradient>
+        <linearGradient id="cableIn" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#505a7e" />
+          <stop offset="100%" stopColor="#3b82f6" />
+        </linearGradient>
+        <linearGradient id="cableOut" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#3b82f6" />
+          <stop offset="100%" stopColor="#10b981" />
+        </linearGradient>
+      </defs>
+
+      {providers.map((s, i) => (
         <g key={s.label}>
-          <path className={i === 0 || i === 2 ? "cable-live" : "cable"} d={`M 46 ${s.y} C 120 ${s.y}, 130 ${gwY}, ${gwX - 34} ${gwY}`} />
-          <circle className={`jack-ring ${i === 0 || i === 2 ? "on" : ""}`} cx="34" cy={s.y} r="9" />
-          {(i === 0 || i === 2) && <circle className="jack-dot" cx="34" cy={s.y} r="3.5" />}
-          <text className="jack-label" x="50" y={s.y + 3}>{s.label}</text>
+          <path
+            d={`M 50 ${s.y} C 130 ${s.y}, 150 ${gwY}, ${gwX - 38} ${gwY}`}
+            fill="none"
+            stroke={i < 3 ? "url(#cableIn)" : "#1e2548"}
+            strokeWidth="2"
+            strokeDasharray={i < 3 ? "6 7" : "4 6"}
+            opacity={i < 3 ? 0.8 : 0.4}
+          >
+            {i < 3 && (
+              <animate attributeName="stroke-dashoffset" from="0" to="-26" dur={`${2 + i * 0.3}s`} repeatCount="indefinite" />
+            )}
+          </path>
+          <circle cx="34" cy={s.y} r="8" fill="#111631" stroke={i < 3 ? "#3b82f6" : "#1e2548"} strokeWidth="1.5" />
+          {i < 3 && <circle cx="34" cy={s.y} r="3" fill="#3b82f6" />}
+          <text x="52" y={s.y + 3.5} fill="#505a7e" fontSize="9" fontFamily="JetBrains Mono, monospace" letterSpacing="0.02em">{s.label}</text>
         </g>
       ))}
 
-      <path className="cable-out" d={`M ${gwX + 34} ${gwY} C 300 ${gwY}, 310 ${gwY}, 364 ${gwY}`} />
+      <path
+        d={`M ${gwX + 38} ${gwY} C 340 ${gwY}, 350 ${gwY}, 396 ${gwY}`}
+        fill="none"
+        stroke="url(#cableOut)"
+        strokeWidth="2.5"
+        strokeDasharray="7 6"
+      >
+        <animate attributeName="stroke-dashoffset" from="0" to="-26" dur="1.6s" repeatCount="indefinite" />
+      </path>
 
-      <rect x={gwX - 34} y={gwY - 30} width="68" height="60" rx="10" fill="var(--brass)" />
-      <text className="gw-label" x={gwX} y={gwY - 6} textAnchor="middle">GATE</text>
-      <text className="gw-label" x={gwX} y={gwY + 12} textAnchor="middle">WAY</text>
+      <rect x={gwX - 38} y={gwY - 32} width="76" height="64" rx="12" fill="url(#gwGrad)" opacity="0.95" />
+      <text x={gwX} y={gwY - 5} textAnchor="middle" fill="white" fontSize="11" fontWeight="700" fontFamily="Space Grotesk, sans-serif">GATE</text>
+      <text x={gwX} y={gwY + 13} textAnchor="middle" fill="white" fontSize="11" fontWeight="700" fontFamily="Space Grotesk, sans-serif">WAY</text>
 
-      <circle className="jack-ring on" cx="378" cy={gwY} r="10" />
-      <circle className="jack-dot" cx="378" cy={gwY} r="4" />
-      <text className="app-label" x="378" y={gwY + 24} textAnchor="middle">app của bạn</text>
+      <circle cx="410" cy={gwY} r="10" fill="#111631" stroke="#10b981" strokeWidth="2" />
+      <circle cx="410" cy={gwY} r="4" fill="#10b981" />
+      <text x="410" y={gwY + 24} textAnchor="middle" fill="#8b93b3" fontSize="9" fontFamily="JetBrains Mono, monospace">your app</text>
     </svg>
+  );
+}
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      className={`copy-btn ${copied ? "copied" : ""}`}
+      onClick={() => {
+        navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      }}
+    >
+      {copied ? "copied" : "copy"}
+    </button>
   );
 }
 
@@ -91,130 +150,220 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="layout">
+    <div className="container">
       <nav className="nav">
-        <div className="brand"><span className="jack" />huyyhere-gateway</div>
-        <a className="signin-btn" href="/dashboard">Sign in →</a>
+        <div className="brand">
+          <div className="brand-icon">H</div>
+          huyyhere
+        </div>
+        <div className="nav-links">
+          <a href="#models">Models</a>
+          <a href="#endpoints">API</a>
+          <a href="#docs">Docs</a>
+          <a className="btn-sm" href="/dashboard">Dashboard</a>
+        </div>
       </nav>
 
       <div className="hero">
         <div>
-          <h1>Nhiều provider AI,<br /><em>một đầu cắm</em> duy nhất.</h1>
-          <p className="lede">
-            HuyyHere Gateway gom {MODELS.length - 1} model từ nhiều provider miễn phí lại thành một endpoint chuẩn OpenAI/Anthropic. Đổi provider, key chết, rate limit — code của bạn không cần biết.
+          <h1>
+            One endpoint.<br />
+            <span className="gradient-text">{MODELS.length - 1} free models.</span>
+          </h1>
+          <p className="subtitle">
+            HuyyHere Gateway routes your requests across {MODELS.length - 1} free AI providers.
+            Provider down? Key expired? Rate limited? Your code never knows.
           </p>
           <div className="cta-row">
-            <a className="cta-primary" href="/dashboard">Lấy free key →</a>
-            <span className="cta-note">2,000,000 token miễn phí / ngày</span>
+            <a className="btn-primary" href="/dashboard">
+              Get free key
+              <span style={{ fontSize: "1.1em" }}>→</span>
+            </a>
+            <a className="btn-secondary" href="#docs">View docs</a>
           </div>
         </div>
-        <PatchBay />
+        <div className="arch-diagram">
+          <ArchDiagram />
+        </div>
       </div>
 
-      <div className="status-bar">
-        <div className="status-item"><span className={`dot ${live ? "" : "offline"}`} />{live ? "Đang sống" : "Đang kết nối..."}</div>
-        <div className="status-item">{MODELS.length} model</div>
-        <div className="status-item">59 tools</div>
+      <div className="glass status-bar">
+        <div className="status-item">
+          <span className={`status-dot ${live ? "" : "offline"}`} />
+          {live ? "Live" : "Connecting..."}
+        </div>
+        <div className="status-item">{MODELS.length} models</div>
+        <div className="status-item">28 tools</div>
+        <div className="status-item">OpenAI compatible</div>
       </div>
 
       {m && (
         <>
-          <div className="block">
-            <div className="section-title">Stats</div>
+          <div className="section">
+            <div className="section-label">Stats</div>
             <div className="stats-grid">
-              <div className="stat-card"><div className="stat-label">Requests</div><div className="stat-value">{fmt(m.summary.totalRequests)}</div></div>
-              <div className="stat-card"><div className="stat-label">Tokens In</div><div className="stat-value">{fmt(m.summary.totalTokensIn)}</div></div>
-              <div className="stat-card"><div className="stat-label">Tokens Out</div><div className="stat-value">{fmt(m.summary.totalTokensOut)}</div></div>
-              <div className={`stat-card ${Number(m.summary.errorRate) > 0 ? "red" : ""}`}><div className="stat-label">Error</div><div className="stat-value">{m.summary.errorRate}</div></div>
-              <div className="stat-card"><div className="stat-label">Uptime</div><div className="stat-value">{m.summary.uptime}</div></div>
+              <div className="glass stat-card">
+                <div className="stat-label">Requests</div>
+                <div className="stat-value">{fmt(m.summary.totalRequests)}</div>
+              </div>
+              <div className="glass stat-card">
+                <div className="stat-label">Tokens In</div>
+                <div className="stat-value">{fmt(m.summary.totalTokensIn)}</div>
+              </div>
+              <div className="glass stat-card">
+                <div className="stat-label">Tokens Out</div>
+                <div className="stat-value">{fmt(m.summary.totalTokensOut)}</div>
+              </div>
+              <div className={`glass stat-card ${Number(m.summary.errorRate) > 0 ? "err" : ""}`}>
+                <div className="stat-label">Error Rate</div>
+                <div className="stat-value">{m.summary.errorRate}</div>
+              </div>
+              <div className="glass stat-card">
+                <div className="stat-label">Uptime</div>
+                <div className="stat-value">{m.summary.uptime}</div>
+              </div>
             </div>
           </div>
 
           {m.hourly.length > 0 && (
-            <div className="block">
-              <div className="section-title">Requests (24h)</div>
-              <div className="chart-box"><Bar data={m.hourly.map(h => h.requests)} /></div>
-            </div>
-          )}
-
-          {Object.keys(m.models).length > 0 && (
-            <div className="block">
-              <div className="section-title">Models đang chạy</div>
-              <div className="table-wrap">
-                <table>
-                  <thead><tr><th>Model</th><th>Requests</th><th>Tokens In</th><th>Tokens Out</th><th>Errors</th><th>Latency</th></tr></thead>
-                  <tbody>
-                    {Object.entries(m.models).sort((a, b) => b[1].requests - a[1].requests).map(([model, s]) => (
-                      <tr key={model}><td className="mono">{model}</td><td>{fmt(s.requests)}</td><td>{fmt(s.tokensIn)}</td><td>{fmt(s.tokensOut)}</td><td className={s.errors > 0 ? "err" : ""}>{s.errors}</td><td>{s.avgLatencyMs.toFixed(0)}ms</td></tr>
-                    ))}
-                  </tbody>
-                </table>
+            <div className="section">
+              <div className="section-label">Requests (24h)</div>
+              <div className="glass chart-box">
+                <Bar data={m.hourly.map(h => h.requests)} />
               </div>
             </div>
           )}
 
-          {Object.keys(m.breakers).length > 0 && (
-            <div className="block">
-              <div className="section-title">Circuit Breakers</div>
-              <div className="breakers">
-                {Object.entries(m.breakers).map(([model, b]) => (
-                  <div key={model} className="breaker"><div className="mono">{model}</div><div className={`state ${b.state}`}>{b.state}</div><div className="sub">Fails: {b.failCount}</div></div>
-                ))}
+          {Object.keys(m.models).length > 0 && (
+            <div className="section">
+              <div className="section-label">Active Models</div>
+              <div className="glass table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Model</th>
+                      <th>Requests</th>
+                      <th>Tokens In</th>
+                      <th>Tokens Out</th>
+                      <th>Errors</th>
+                      <th>Latency</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(m.models)
+                      .sort((a, b) => b[1].requests - a[1].requests)
+                      .map(([model, s]) => (
+                        <tr key={model}>
+                          <td className="mono" style={{ color: "var(--text-primary)" }}>{model}</td>
+                          <td>{fmt(s.requests)}</td>
+                          <td>{fmt(s.tokensIn)}</td>
+                          <td>{fmt(s.tokensOut)}</td>
+                          <td className={s.errors > 0 ? "err" : ""}>{s.errors}</td>
+                          <td>{s.avgLatencyMs.toFixed(0)}ms</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
         </>
       )}
 
-      <div className="block">
-        <div className="section-title">Model jacks</div>
-        <div className="jacks-grid">{MODELS.map(id => <div className="jack-card" key={id}><span className="ring" /><span className="name">{id}</span></div>)}</div>
-      </div>
-
-      <div className="block">
-        <div className="section-title">Endpoints</div>
-        <div className="endpoints">
-          <div className="endpoint"><span className="method post">POST</span><code>/v1/chat/completions</code><span className="desc">OpenAI-compatible</span></div>
-          <div className="endpoint"><span className="method post">POST</span><code>/v1/messages</code><span className="desc">Anthropic Messages</span></div>
-          <div className="endpoint"><span className="method post">POST</span><code>/v1/responses</code><span className="desc">OpenAI Responses</span></div>
-          <div className="endpoint"><span className="method post">POST</span><code>/v1/embeddings</code><span className="desc">Embeddings</span></div>
-          <div className="endpoint"><span className="method post">POST</span><code>/v1/images/generations</code><span className="desc">Image generation (Stability AI)</span></div>
-          <div className="endpoint"><span className="method get">GET</span><code>/v1/models</code></div>
-          <div className="endpoint"><span className="method get">GET</span><code>/v1/tools</code></div>
-          <div className="endpoint"><span className="method get">GET</span><code>/api/health</code></div>
+      <div className="section" id="models">
+        <div className="section-label">Models</div>
+        <div className="models-grid">
+          {MODELS.map(id => (
+            <div className="glass model-card" key={id}>
+              <span className="model-dot" />
+              <span className="model-name">{id}</span>
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="block">
-        <div className="section-title">OpenAI SDK</div>
-        <div className="code-block"><div className="code-header"><span>python</span></div>
+      <div className="section" id="endpoints">
+        <div className="section-label">Endpoints</div>
+        <div className="glass endpoints">
+          <div className="endpoint">
+            <span className="method post">POST</span>
+            <code>/v1/chat/completions</code>
+            <span className="desc">OpenAI-compatible</span>
+          </div>
+          <div className="endpoint">
+            <span className="method post">POST</span>
+            <code>/v1/messages</code>
+            <span className="desc">Anthropic Messages</span>
+          </div>
+          <div className="endpoint">
+            <span className="method post">POST</span>
+            <code>/v1/responses</code>
+            <span className="desc">OpenAI Responses</span>
+          </div>
+          <div className="endpoint">
+            <span className="method post">POST</span>
+            <code>/v1/embeddings</code>
+            <span className="desc">Embeddings</span>
+          </div>
+          <div className="endpoint">
+            <span className="method post">POST</span>
+            <code>/v1/images/generations</code>
+            <span className="desc">Image generation</span>
+          </div>
+          <div className="endpoint">
+            <span className="method get">GET</span>
+            <code>/v1/models</code>
+          </div>
+          <div className="endpoint">
+            <span className="method get">GET</span>
+            <code>/v1/tools</code>
+          </div>
+        </div>
+      </div>
+
+      <div className="section" id="docs">
+        <div className="section-label">Quick Start</div>
+
+        <div className="glass code-block" style={{ marginBottom: "0.8rem" }}>
+          <div className="code-header">
+            <span>Python (OpenAI SDK)</span>
+            <CopyButton text={`from openai import OpenAI\n\nclient = OpenAI(base_url=\"${BASE}/v1\", api_key=\"sk-huyyhere-gw-***\")\nr = client.chat.completions.create(model=\"auto\", messages=[{\"role\":\"user\",\"content\":\"Hello\"}])\nprint(r.choices[0].message.content)`} />
+          </div>
           <pre>{`from openai import OpenAI
 
 client = OpenAI(base_url="${BASE}/v1", api_key="sk-huyyhere-gw-***")
 r = client.chat.completions.create(model="auto", messages=[{"role":"user","content":"Hello"}])
-print(r.choices[0].message.content)`}</pre></div>
-      </div>
+print(r.choices[0].message.content)`}</pre>
+        </div>
 
-      <div className="block">
-        <div className="section-title">Anthropic SDK</div>
-        <div className="code-block"><div className="code-header"><span>python</span></div>
+        <div className="glass code-block" style={{ marginBottom: "0.8rem" }}>
+          <div className="code-header">
+            <span>Python (Anthropic SDK)</span>
+            <CopyButton text={`import anthropic\n\nclient = anthropic.Anthropic(base_url=\"${BASE}/v1\", api_key=\"sk-huyyhere-gw-***\")\nm = client.messages.create(model=\"auto\", max_tokens=1024, messages=[{\"role\":\"user\",\"content\":\"Hello\"}])\nprint(m.content[0].text)`} />
+          </div>
           <pre>{`import anthropic
 
 client = anthropic.Anthropic(base_url="${BASE}/v1", api_key="sk-huyyhere-gw-***")
 m = client.messages.create(model="auto", max_tokens=1024, messages=[{"role":"user","content":"Hello"}])
-print(m.content[0].text)`}</pre></div>
-      </div>
+print(m.content[0].text)`}</pre>
+        </div>
 
-      <div className="block">
-        <div className="section-title">curl</div>
-        <div className="code-block"><div className="code-header"><span>bash</span></div>
+        <div className="glass code-block">
+          <div className="code-header">
+            <span>cURL</span>
+            <CopyButton text={`curl -X POST ${BASE}/v1/chat/completions \\\n  -H "Content-Type: application/json" \\\n  -H "Authorization: Bearer sk-huyyhere-gw-***" \\\n  -d '{"model":"auto","messages":[{"role":"user","content":"Hello"}],"stream":true}'`} />
+          </div>
           <pre>{`curl -X POST ${BASE}/v1/chat/completions \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer sk-huyyhere-gw-***" \\
-  -d '{"model":"auto","messages":[{"role":"user","content":"Hello"}],"stream":true}'`}</pre></div>
+  -d '{"model":"auto","messages":[{"role":"user","content":"Hello"}],"stream":true}'`}</pre>
+        </div>
       </div>
 
-      <footer className="footer"><span>huyyhere-gateway</span><span>v0.1.8</span></footer>
+      <footer className="footer">
+        <span>huyyhere-gateway</span>
+        <span>v0.2.0</span>
+      </footer>
     </div>
   );
 }

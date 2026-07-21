@@ -10,7 +10,7 @@
       },
       "models": {
         "oc/big-pickle": { "name": "Big Pickle" },
-        "mimo-code-free-auto-switcher": { "name": "MiMo Code Free Auth Switcher" }
+        "kimi-auto-switcher": { "name": "Kimi Code" }
       }
     }
   }

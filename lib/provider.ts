@@ -198,16 +198,6 @@ export function buildModelRoutes(): Record<string, ModelRoute> {
     provider: "cohere",
   };
 
-  // Pollinations - official (gen.pollinations.ai, OpenAI-shaped, needs a key now)
-  const pollinationsKeys = getKeyPool("POLLINATIONS");
-  routes["pollinations-openai"] = {
-    baseUrl: process.env.POLLINATIONS_BASE_URL!,
-    getApiKey: () => selectKey(pollinationsKeys),
-    getApiKeys: () => selectKeys(pollinationsKeys),
-    model: "openai",
-    provider: "pollinations",
-  };
-
   return routes;
 }
 

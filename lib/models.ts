@@ -24,7 +24,6 @@ export const MODEL_IDS = [
   "samba-deepseek-v3.2",
   "together-llama-3.1-8b",
   "cohere-command-r-plus",
-  "pollinations-openai",
 ] as const;
 
 export type ModelId = (typeof MODEL_IDS)[number];
@@ -56,7 +55,6 @@ export const MODEL_CAPABILITIES: Record<string, ModelCapabilities> = {
   "samba-deepseek-v3.2":         { vision: false, tools: true,  streaming: true, contextLength: 128000, maxOutput: 8192,  input: 0, output: 0 },
   "together-llama-3.1-8b":       { vision: false, tools: true,  streaming: true, contextLength: 128000, maxOutput: 8192,  input: 0, output: 0 },
   "cohere-command-r-plus":       { vision: false, tools: true,  streaming: true, contextLength: 128000, maxOutput: 4096,  input: 0, output: 0 },
-  "pollinations-openai":         { vision: false, tools: true,  streaming: true, contextLength: 32000,  maxOutput: 4096,  input: 0, output: 0 },
 };
 
 export function getModelCapabilities(modelId: string): ModelCapabilities | undefined {
@@ -93,5 +91,5 @@ export const FALLBACK_ORDER = [
   "navy-gpt-4.1", "mnn-gpt-4.1",
   "naga-nemotron-3-ultra", "mistral-small",
   "or-llama-3.1-8b", "together-llama-3.1-8b", "samba-deepseek-v3.2",
-  "cohere-command-r-plus", "pollinations-openai",
+  "cohere-command-r-plus",
 ];
