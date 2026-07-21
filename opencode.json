@@ -1,0 +1,17 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "blackcat": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "BlackCat Router",
+      "options": {
+        "apiKey": "sk-3a2356d08be557bd-ygdugk-f8520280",
+        "baseURL": "https://9router1.blackcatofficial.qzz.io/v1"
+      },
+      "models": {
+        "oc/big-pickle": { "name": "Big Pickle" },
+        "mimo-code-free-auto-switcher": { "name": "MiMo Code Free Auth Switcher" }
+      }
+    }
+  }
+}
