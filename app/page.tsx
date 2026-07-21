@@ -304,11 +304,11 @@ export default function Home() {
         <div className="glass code-block" style={{ marginBottom: "0.8rem" }}>
           <div className="code-header">
             <span>Python (OpenAI SDK)</span>
-            <CopyButton text={`from openai import OpenAI\n\nclient = OpenAI(base_url=\"${BASE}/v1\", api_key=\"sk-gw-***\")\nr = client.chat.completions.create(model=\"auto\", messages=[{\"role\":\"user\",\"content\":\"Hello\"}])\nprint(r.choices[0].message.content)`} />
+            <CopyButton text={`from openai import OpenAI\n\nclient = OpenAI(base_url=\"${BASE}/v1\", api_key=\"YOUR_API_KEY\")\nr = client.chat.completions.create(model=\"auto\", messages=[{\"role\":\"user\",\"content\":\"Hello\"}])\nprint(r.choices[0].message.content)`} />
           </div>
           <pre>{`from openai import OpenAI
 
-client = OpenAI(base_url="${BASE}/v1", api_key="sk-gw-***")
+client = OpenAI(base_url="${BASE}/v1", api_key="YOUR_API_KEY")
 r = client.chat.completions.create(model="auto", messages=[{"role":"user","content":"Hello"}])
 print(r.choices[0].message.content)`}</pre>
         </div>
@@ -316,11 +316,11 @@ print(r.choices[0].message.content)`}</pre>
         <div className="glass code-block" style={{ marginBottom: "0.8rem" }}>
           <div className="code-header">
             <span>Python (Anthropic SDK)</span>
-            <CopyButton text={`import anthropic\n\nclient = anthropic.Anthropic(base_url=\"${BASE}/v1\", api_key=\"sk-gw-***\")\nm = client.messages.create(model=\"auto\", max_tokens=1024, messages=[{\"role\":\"user\",\"content\":\"Hello\"}])\nprint(m.content[0].text)`} />
+            <CopyButton text={`import anthropic\n\nclient = anthropic.Anthropic(base_url=\"${BASE}/v1\", api_key=\"YOUR_API_KEY\")\nm = client.messages.create(model=\"auto\", max_tokens=1024, messages=[{\"role\":\"user\",\"content\":\"Hello\"}])\nprint(m.content[0].text)`} />
           </div>
           <pre>{`import anthropic
 
-client = anthropic.Anthropic(base_url="${BASE}/v1", api_key="sk-gw-***")
+client = anthropic.Anthropic(base_url="${BASE}/v1", api_key="YOUR_API_KEY")
 m = client.messages.create(model="auto", max_tokens=1024, messages=[{"role":"user","content":"Hello"}])
 print(m.content[0].text)`}</pre>
         </div>
@@ -328,11 +328,11 @@ print(m.content[0].text)`}</pre>
         <div className="glass code-block">
           <div className="code-header">
             <span>cURL</span>
-            <CopyButton text={`curl -X POST ${BASE}/v1/chat/completions \\\n  -H "Content-Type: application/json" \\\n  -H "Authorization: Bearer sk-gw-***" \\\n  -d '{"model":"auto","messages":[{"role":"user","content":"Hello"}],"stream":true}'`} />
+            <CopyButton text={`curl -X POST ${BASE}/v1/chat/completions \\\n  -H "Content-Type: application/json" \\\n  -H "Authorization: Bearer YOUR_API_KEY" \\\n  -d '{"model":"auto","messages":[{"role":"user","content":"Hello"}],"stream":true}'`} />
           </div>
           <pre>{`curl -X POST ${BASE}/v1/chat/completions \\
   -H "Content-Type: application/json" \\
-  -H "Authorization: Bearer sk-gw-***" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
   -d '{"model":"auto","messages":[{"role":"user","content":"Hello"}],"stream":true}'`}</pre>
         </div>
       </div>
