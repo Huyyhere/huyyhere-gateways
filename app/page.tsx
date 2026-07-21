@@ -4,13 +4,6 @@ import { useEffect, useState, useRef } from "react";
 import "./globals.css";
 
 const BASE = "https://huyyhere-gateways.vercel.app";
-const MODELS = [
-  "auto",
-  "kimi-k2.7-code", "minimax-m3", "kimi-k2.6",
-  "deepseek-v4-pro",
-  "glm-5.2", "grok-4.5",
-   "mimo-code-free", "glm-4.7-flash", "glm-4.5-flash",
-];
 
 function fmt(n: number): string {
   if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(1) + "B";
@@ -19,7 +12,7 @@ function fmt(n: number): string {
   return String(n);
 }
 
-function fmtBytes(b: number): string {
+function fmtBytes(b: number) {
   if (b >= 1_073_741_824) return (b / 1_073_741_824).toFixed(1) + " GB";
   if (b >= 1_048_576) return (b / 1_048_576).toFixed(1) + " MB";
   if (b >= 1024) return (b / 1024).toFixed(1) + " KB";
@@ -49,6 +42,7 @@ function Bar({ data }: { data: number[] }) {
 export default function Home() {
   const [m, setM] = useState<Metrics | null>(null);
   const [live, setLive] = useState(false);
+  const [models, setModels] = useState<string[]>([]);
   const ref = useRef<EventSource | null>(null);
 
   useEffect(() => {
@@ -58,6 +52,12 @@ export default function Home() {
     es.onerror = () => setLive(false);
     es.onmessage = (e) => { try { setM(JSON.parse(e.data)); } catch {} };
     return () => es.close();
+  }, []);
+
+  useEffect(() => {
+    fetch("/v1/models").then(r => r.json()).then(d => {
+      setModels(["auto", ...(d.data || []).map((m: { id: string }) => m.id)]);
+    }).catch(() => setModels(["auto"]));
   }, []);
 
   return (
@@ -73,7 +73,7 @@ export default function Home() {
 
       <div className="status-bar">
         <div className="status-item"><span className={`dot ${live ? "" : "offline"}`} /><span>{live ? "Live" : "Connecting..."}</span></div>
-        <div className="status-item"><span style={{ color: "var(--text)" }}>{MODELS.length}</span> models</div>
+        <div className="status-item"><span style={{ color: "var(--text)" }}>{models.length}</span> models</div>
         <div className="status-item"><span style={{ color: "var(--text)" }}>59</span> tools</div>
       </div>
 
@@ -125,7 +125,7 @@ export default function Home() {
       )}
 
       <div className="section-title">Models</div>
-      <div className="models-grid">{MODELS.map(m => <div className="model-card" key={m}><div className="name">{m}</div></div>)}</div>
+      <div className="models-grid">{models.map(m => <div className="model-card" key={m}><div className="name">{m}</div></div>)}</div>
 
       <div className="section-title">Endpoints</div>
       <div className="endpoints">
