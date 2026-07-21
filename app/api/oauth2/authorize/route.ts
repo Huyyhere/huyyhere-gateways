@@ -3,7 +3,9 @@ import { buildAuthorizeUrl, generateState, STATE_COOKIE_NAME } from "@/lib/disco
 
 export async function GET(req: NextRequest) {
   const state = generateState();
-  const res = NextResponse.redirect(buildAuthorizeUrl(state));
+  const origin = req.nextUrl.origin;
+  const redirectUri = `${origin}/api/oauth2/callback`;
+  const res = NextResponse.redirect(buildAuthorizeUrl(state, redirectUri));
   res.cookies.set(STATE_COOKIE_NAME, state, {
     httpOnly: true,
     secure: true,

@@ -17,7 +17,8 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const user = await exchangeCodeForUser(code);
+    const redirectUri = `${req.nextUrl.origin}/api/oauth2/callback`;
+    const user = await exchangeCodeForUser(code, redirectUri);
 
     const res = NextResponse.redirect(new URL("/dashboard", req.url));
     res.cookies.delete(STATE_COOKIE_NAME);
