@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getKey } from "./api-keys";
-import { verifySessionCookieValue, SESSION_COOKIE_NAME } from "./discord-auth";
 import crypto from "crypto";
 
 const OWNER_SECRET = process.env.OWNER_SECRET;
@@ -12,7 +11,6 @@ export function timingSafeStringEqual(a: string, b: string): boolean {
   const aBuf = Buffer.from(a);
   const bBuf = Buffer.from(b);
   if (aBuf.length !== bBuf.length) {
-    // still run a compare of equal length to avoid leaking length via early-return timing
     crypto.timingSafeEqual(aBuf, aBuf);
     return false;
   }
@@ -28,7 +26,6 @@ export function isOwnerSecret(candidate: string): boolean {
   return crypto.timingSafeEqual(buf, OWNER_SECRET_BUF);
 }
 
-// Rate limiting for owner endpoints
 const ownerRateLimit = new Map<string, { count: number; resetAt: number }>();
 const OWNER_RATE_LIMIT = 60;
 const OWNER_RATE_WINDOW = 60_000;
@@ -45,7 +42,6 @@ function checkOwnerRateLimit(ip: string): boolean {
   return true;
 }
 
-// Input validation
 export function sanitize(input: string, maxLen = 1000): string {
   return input.replace(/[<>"'`;]/g, "").slice(0, maxLen);
 }
@@ -58,23 +54,8 @@ export function validateTokenLimit(limit: number): boolean {
   return Number.isFinite(limit) && limit >= 0 && limit <= 100_000_000;
 }
 
-// Request signing verification
-export function verifySignature(req: NextRequest, secret: string): boolean {
-  const signature = req.headers.get("x-signature");
-  const timestamp = req.headers.get("x-timestamp");
-  if (!signature || !timestamp) return false;
-
-  const ts = parseInt(timestamp);
-  if (isNaN(ts) || Math.abs(Date.now() - ts) > 300_000) return false; // 5 min window
-
-  const body = req.headers.get("x-body-hash") || "";
-  const expected = crypto.createHmac("sha256", secret).update(`${timestamp}:${body}`).digest("hex");
-  return signature === expected;
-}
-
-// IP whitelist check
 function isAllowedIP(ip: string): boolean {
-  if (ALLOWED_IPS.length === 0) return true; // No whitelist = allow all
+  if (ALLOWED_IPS.length === 0) return true;
   return ALLOWED_IPS.includes(ip);
 }
 
@@ -84,7 +65,6 @@ function getClientIP(req: NextRequest): string {
     || "unknown";
 }
 
-// Main owner auth middleware
 export interface OwnerAuthResult {
   allowed: boolean;
   error?: NextResponse;
@@ -94,7 +74,6 @@ export interface OwnerAuthResult {
 export async function verifyOwnerAuth(req: NextRequest): Promise<OwnerAuthResult> {
   const ip = getClientIP(req);
 
-  // Rate limit
   if (!checkOwnerRateLimit(ip)) {
     return {
       allowed: false,
@@ -105,21 +84,11 @@ export async function verifyOwnerAuth(req: NextRequest): Promise<OwnerAuthResult
     };
   }
 
-  // IP whitelist
   if (!isAllowedIP(ip)) {
     return {
       allowed: false,
-      error: NextResponse.json(
-        { error: "ip not allowed", ip },
-        { status: 403 }
-      ),
+      error: NextResponse.json({ error: "ip not allowed", ip }, { status: 403 }),
     };
-  }
-
-  // Discord-authenticated owner session (used by the /dashboard owner-only tabs)
-  const session = verifySessionCookieValue(req.cookies.get(SESSION_COOKIE_NAME)?.value);
-  if (session && session.isOwner) {
-    return { allowed: true, key: `discord:${session.id}` };
   }
 
   const auth = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "").trim();
@@ -130,12 +99,10 @@ export async function verifyOwnerAuth(req: NextRequest): Promise<OwnerAuthResult
     };
   }
 
-  // Owner secret
   if (isOwnerSecret(auth)) {
     return { allowed: true, key: auth };
   }
 
-  // Dynamic API key with admin flag
   const apiKey = await getKey(auth);
   if (apiKey && (apiKey as any).admin) {
     return { allowed: true, key: auth };
@@ -147,7 +114,6 @@ export async function verifyOwnerAuth(req: NextRequest): Promise<OwnerAuthResult
   };
 }
 
-// Security headers for owner responses
 export function secureHeaders(): Record<string, string> {
   return {
     "X-Content-Type-Options": "nosniff",

@@ -4,13 +4,6 @@ import { useEffect, useState, useRef } from "react";
 import "./globals.css";
 
 const BASE = "https://huyyhere-gateways.vercel.app";
-const MODELS = [
-  "auto",
-  "kimi-k2.7-code", "minimax-m3", "kimi-k2.6",
-  "deepseek-v4-pro",
-  "glm-5.2", "grok-4.5",
-  "mimo-code-free", "glm-4.7-flash", "glm-4.5-flash",
-];
 
 function fmt(n: number): string {
   if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(1) + "B";
@@ -22,9 +15,6 @@ function fmt(n: number): string {
 interface Metrics {
   summary: { totalRequests: number; totalTokensIn: number; totalTokensOut: number; totalCost: string; totalErrors: number; errorRate: string; uptime: string };
   models: Record<string, { requests: number; tokensIn: number; tokensOut: number; errors: number; avgLatencyMs: number }>;
-  cache: { entries: number; bytes: number };
-  breakers: Record<string, { state: string; failCount: number }>;
-  rateLimiter: { keys: number };
   hourly: { hour: string; requests: number }[];
 }
 
@@ -157,7 +147,6 @@ export default function Home() {
           huyyhere
         </div>
         <div className="nav-links">
-          <a href="#models">Models</a>
           <a href="#endpoints">API</a>
           <a href="#docs">Docs</a>
           <a className="btn-sm" href="/dashboard">Dashboard</a>
@@ -168,15 +157,15 @@ export default function Home() {
         <div>
           <h1>
             One endpoint.<br />
-            <span className="gradient-text">{MODELS.length - 1} free models.</span>
+            <span className="gradient-text">One model. Auto-failover.</span>
           </h1>
           <p className="subtitle">
-            HuyyHere Gateway routes your requests across {MODELS.length - 1} free AI providers.
+            HuyyHere Gateway routes your requests across 10+ free AI providers.
             Provider down? Key expired? Rate limited? Your code never knows.
           </p>
           <div className="cta-row">
             <a className="btn-primary" href="/dashboard">
-              Get free key
+              Get started
               <span style={{ fontSize: "1.1em" }}>→</span>
             </a>
             <a className="btn-secondary" href="#docs">View docs</a>
@@ -192,7 +181,7 @@ export default function Home() {
           <span className={`status-dot ${live ? "" : "offline"}`} />
           {live ? "Live" : "Connecting..."}
         </div>
-        <div className="status-item">{MODELS.length} models</div>
+        <div className="status-item">model: auto</div>
         <div className="status-item">28 tools</div>
         <div className="status-item">OpenAI compatible</div>
       </div>
@@ -270,18 +259,6 @@ export default function Home() {
         </>
       )}
 
-      <div className="section" id="models">
-        <div className="section-label">Models</div>
-        <div className="models-grid">
-          {MODELS.map(id => (
-            <div className="glass model-card" key={id}>
-              <span className="model-dot" />
-              <span className="model-name">{id}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
       <div className="section" id="endpoints">
         <div className="section-label">Endpoints</div>
         <div className="glass endpoints">
@@ -327,11 +304,11 @@ export default function Home() {
         <div className="glass code-block" style={{ marginBottom: "0.8rem" }}>
           <div className="code-header">
             <span>Python (OpenAI SDK)</span>
-            <CopyButton text={`from openai import OpenAI\n\nclient = OpenAI(base_url=\"${BASE}/v1\", api_key=\"sk-huyyhere-gw-***\")\nr = client.chat.completions.create(model=\"auto\", messages=[{\"role\":\"user\",\"content\":\"Hello\"}])\nprint(r.choices[0].message.content)`} />
+            <CopyButton text={`from openai import OpenAI\n\nclient = OpenAI(base_url=\"${BASE}/v1\", api_key=\"sk-gw-***\")\nr = client.chat.completions.create(model=\"auto\", messages=[{\"role\":\"user\",\"content\":\"Hello\"}])\nprint(r.choices[0].message.content)`} />
           </div>
           <pre>{`from openai import OpenAI
 
-client = OpenAI(base_url="${BASE}/v1", api_key="sk-huyyhere-gw-***")
+client = OpenAI(base_url="${BASE}/v1", api_key="sk-gw-***")
 r = client.chat.completions.create(model="auto", messages=[{"role":"user","content":"Hello"}])
 print(r.choices[0].message.content)`}</pre>
         </div>
@@ -339,11 +316,11 @@ print(r.choices[0].message.content)`}</pre>
         <div className="glass code-block" style={{ marginBottom: "0.8rem" }}>
           <div className="code-header">
             <span>Python (Anthropic SDK)</span>
-            <CopyButton text={`import anthropic\n\nclient = anthropic.Anthropic(base_url=\"${BASE}/v1\", api_key=\"sk-huyyhere-gw-***\")\nm = client.messages.create(model=\"auto\", max_tokens=1024, messages=[{\"role\":\"user\",\"content\":\"Hello\"}])\nprint(m.content[0].text)`} />
+            <CopyButton text={`import anthropic\n\nclient = anthropic.Anthropic(base_url=\"${BASE}/v1\", api_key=\"sk-gw-***\")\nm = client.messages.create(model=\"auto\", max_tokens=1024, messages=[{\"role\":\"user\",\"content\":\"Hello\"}])\nprint(m.content[0].text)`} />
           </div>
           <pre>{`import anthropic
 
-client = anthropic.Anthropic(base_url="${BASE}/v1", api_key="sk-huyyhere-gw-***")
+client = anthropic.Anthropic(base_url="${BASE}/v1", api_key="sk-gw-***")
 m = client.messages.create(model="auto", max_tokens=1024, messages=[{"role":"user","content":"Hello"}])
 print(m.content[0].text)`}</pre>
         </div>
@@ -351,11 +328,11 @@ print(m.content[0].text)`}</pre>
         <div className="glass code-block">
           <div className="code-header">
             <span>cURL</span>
-            <CopyButton text={`curl -X POST ${BASE}/v1/chat/completions \\\n  -H "Content-Type: application/json" \\\n  -H "Authorization: Bearer sk-huyyhere-gw-***" \\\n  -d '{"model":"auto","messages":[{"role":"user","content":"Hello"}],"stream":true}'`} />
+            <CopyButton text={`curl -X POST ${BASE}/v1/chat/completions \\\n  -H "Content-Type: application/json" \\\n  -H "Authorization: Bearer sk-gw-***" \\\n  -d '{"model":"auto","messages":[{"role":"user","content":"Hello"}],"stream":true}'`} />
           </div>
           <pre>{`curl -X POST ${BASE}/v1/chat/completions \\
   -H "Content-Type: application/json" \\
-  -H "Authorization: Bearer sk-huyyhere-gw-***" \\
+  -H "Authorization: Bearer sk-gw-***" \\
   -d '{"model":"auto","messages":[{"role":"user","content":"Hello"}],"stream":true}'`}</pre>
         </div>
       </div>
